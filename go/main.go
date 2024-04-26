@@ -48,7 +48,6 @@ func main() {
 		}
 		getExcluisonProof(key, tree)
 	}
-
 }
 
 func getTreeRoot(t *imt.TreeWriter) {
@@ -58,6 +57,15 @@ func getTreeRoot(t *imt.TreeWriter) {
 
 func getInclusionProof(key *big.Int, t *imt.TreeWriter) {
 	inclusionProof, _ := t.ProveInclusion(key)
+	_encodeForFoundry(inclusionProof)
+}
+
+func getExcluisonProof(key *big.Int, t *imt.TreeWriter) {
+	exclusionProof, _ := t.ProveExclusion(key)
+	_encodeForFoundry(exclusionProof)
+}
+
+func _encodeForFoundry(p *imt.Proof) {
 	// Encode the tree-data for the proof
 	// Solidity structs head memory locations
 	// struct Proof {
@@ -76,32 +84,27 @@ func getInclusionProof(key *big.Int, t *imt.TreeWriter) {
 	tupleHead, _ := hexutil.Decode("0x20")
 	head := hexutil.Encode(padBytes(tupleHead, 32))
 	// Encode the data
-	root := hexutil.Encode(padBytes(inclusionProof.Root.Bytes(), 32))
-	size := hexutil.Encode(padBytes(Uint64ToBytes(inclusionProof.Size), 32))
-	index := hexutil.Encode(padBytes(Uint64ToBytes(inclusionProof.Index), 32))
-	nodeKey := hexutil.Encode(padBytes(inclusionProof.Node.Key.Bytes(), 32))
-	nodeValue := hexutil.Encode(padBytes(inclusionProof.Node.Value.Bytes(), 32))
-	nodeNext := hexutil.Encode(padBytes(inclusionProof.Node.NextKey.Bytes(), 32))
+	root := hexutil.Encode(padBytes(p.Root.Bytes(), 32))
+	size := hexutil.Encode(padBytes(Uint64ToBytes(p.Size), 32))
+	index := hexutil.Encode(padBytes(Uint64ToBytes(p.Index), 32))
+	nodeKey := hexutil.Encode(padBytes(p.Node.Key.Bytes(), 32))
+	nodeValue := hexutil.Encode(padBytes(p.Node.Value.Bytes(), 32))
+	nodeNext := hexutil.Encode(padBytes(p.Node.NextKey.Bytes(), 32))
 	result := head + root[2:] + size[2:] + index[2:] + nodeKey[2:] + nodeValue[2:] + nodeNext[2:]
 
 	// Encode the head location of the dynamicly set data
 	headLocation, _ := hexutil.Decode("0xe0")
 	result += hexutil.Encode(padBytes(headLocation, 32))[2:]
 	// Encode the length of the array for dyanamic var assignment w/ abi.decode()
-	result += hexutil.Encode(padBytes(Uint64ToBytes(uint64(len(inclusionProof.Siblings))), 32))[2:]
+	result += hexutil.Encode(padBytes(Uint64ToBytes(uint64(len(p.Siblings))), 32))[2:]
 
 	// Encode the members of the array
-	for i := 0; i < len(inclusionProof.Siblings); i++ {
-		result += hexutil.Encode(padBytes(inclusionProof.Siblings[i].Bytes(), 32))[2:]
+	for i := 0; i < len(p.Siblings); i++ {
+		result += hexutil.Encode(padBytes(p.Siblings[i].Bytes(), 32))[2:]
 	}
 	// valid, _ := inclusionProof.Valid(&t.TreeReader)
 	// fmt.Println(valid)
 	fmt.Println(result)
-}
-
-func getExcluisonProof(key *big.Int, t *imt.TreeWriter) {
-	exclusionProof, _ := t.ProveExclusion(key)
-	fmt.Println(exclusionProof)
 }
 
 func padBytes(b []byte, length int) []byte {
