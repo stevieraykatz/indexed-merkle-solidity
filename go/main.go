@@ -15,7 +15,7 @@ import (
 )
 
 func main() {
-	levels := uint64(4)
+	levels := uint64(16)
 	temp, _ := os.MkdirTemp("", "*")
 	pDb, _ := pebble.Open(temp, &pebble.Options{})
 	imtDb := db.NewPebble(pDb)

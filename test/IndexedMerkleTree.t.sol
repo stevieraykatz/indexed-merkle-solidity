@@ -6,11 +6,17 @@ import {IndexedMerkleTree} from "../src/IndexedMerkleTree.sol";
 
 contract IndexedMerkleTreeTest is Test {
 
-    function test_verify() public {
+    function test_verifyInclusion() public {
         (bytes32 root) = _goGetTree();
         console2.logBytes32(root);
         IndexedMerkleTree.Proof memory proof = _goGetIncProof();
         assert(IndexedMerkleTree.verify(proof));
+    }
+
+    function test_verifyExclusion() public {
+        (bytes32 root) = _goGetTree();
+        console2.logBytes32(root);
+        IndexedMerkleTree.Proof memory proof = _goGetExcProof();
     }
 
     function _goGetTree() internal returns (bytes32) {
@@ -21,11 +27,11 @@ contract IndexedMerkleTreeTest is Test {
     }
 
 
-    function _goGetIncProof() internal returns (IndexedMerkleTree.Proof memory) {
+    function _goGetIncProof(uint256 key) internal returns (IndexedMerkleTree.Proof memory) {
         string[] memory inputs = new string[](3);
         inputs[0] = "test/../go/imt";
         inputs[1] = "getInclusionProof";
-        inputs[2] = "123";
+        inputs[2] = key.;
         return abi.decode(vm.ffi(inputs), (IndexedMerkleTree.Proof));
     }
 }
