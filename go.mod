@@ -6,6 +6,7 @@ require (
 	github.com/cockroachdb/pebble v0.0.0-20230928194634-aa077af62593
 	github.com/consensys/gnark-crypto v0.12.2-0.20240215234832-d72fcb379d3e
 	github.com/mdehoog/indexed-merkle-tree v0.0.0-20240420075202-4a8258bb7064
+	github.com/mdehoog/poseidon v0.0.0-20240301020106-ba6c393a5802
 // github.com/mdehoog/poseidon v0.0.0-20240301020106-ba6c393a5802
 )
 
@@ -27,7 +28,6 @@ require (
 	github.com/kr/pretty v0.3.1 // indirect
 	github.com/kr/text v0.2.0 // indirect
 	github.com/matttproud/golang_protobuf_extensions v1.0.2-0.20181231171920-c182affec369 // indirect
-	github.com/mdehoog/poseidon v0.0.0-20240301020106-ba6c393a5802 // indirect
 	github.com/mmcloughlin/addchain v0.4.0 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/prometheus/client_golang v1.12.0 // indirect

@@ -188,8 +188,6 @@ github.com/matttproud/golang_protobuf_extensions v1.0.2-0.20181231171920-c182aff
 github.com/matttproud/golang_protobuf_extensions v1.0.2-0.20181231171920-c182affec369/go.mod h1:BSXmuO+STAnVfrANrmjBb36TMTDstsz7MSK+HVaYKv4=
 github.com/mdehoog/indexed-merkle-tree v0.0.0-20240420075202-4a8258bb7064 h1:uRjAPslep9/qPqKjDq4K6G78WUJCFwfb3DRgQsbwBjI=
 github.com/mdehoog/indexed-merkle-tree v0.0.0-20240420075202-4a8258bb7064/go.mod h1:48kgV1+OSRrFXTMtRaDjouD8R7iInBsm/jNKAxVf//I=
-github.com/mdehoog/poseidon v0.0.0-20240224232113-d985a7c5e5b2 h1:5CotZzWDLSq7t4ReSKc53q330Mbg0ULKghkiDbNmlCY=
-github.com/mdehoog/poseidon v0.0.0-20240224232113-d985a7c5e5b2/go.mod h1:dndjbBFBHReFDC3K8IbAF+Ss+3JbtzyYjLducRkV3GM=
 github.com/mdehoog/poseidon v0.0.0-20240301020106-ba6c393a5802 h1:CfxXsQOJVRzKn9VPe12SUWQQeUxsBsz7b9PA0A+FOgQ=
 github.com/mdehoog/poseidon v0.0.0-20240301020106-ba6c393a5802/go.mod h1:UWNkR2GgyHX6Nz8cBJXdUDyTf14UoEB+5YgncI0rsJE=
 github.com/mmcloughlin/addchain v0.4.0 h1:SobOdjm2xLj1KkXN5/n0xTIWyZA2+s99UCY1iPfkHRY=
