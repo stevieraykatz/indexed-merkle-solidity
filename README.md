@@ -1,19 +1,19 @@
-## Foundry
-
-**Foundry is a blazing fast, portable and modular toolkit for Ethereum application development written in Rust.**
-
-Foundry consists of:
-
--   **Forge**: Ethereum testing framework (like Truffle, Hardhat and DappTools).
--   **Cast**: Swiss army knife for interacting with EVM smart contracts, sending transactions and getting chain data.
--   **Anvil**: Local Ethereum node, akin to Ganache, Hardhat Network.
--   **Chisel**: Fast, utilitarian, and verbose solidity REPL.
-
 ## Documentation
 
-https://book.getfoundry.sh/
+**NOTE: This library is a WIP and unaudited -- consume with caution.**
+
+Inspired by this paper from Aztec: https://docs.aztec.network/learn/concepts/storage/trees/indexed_merkle_tree
+
+Consume IMT proofs on-chain with this solidity library. Built around the specific proof structure of this go-lang lib: https://github.com/mdehoog/indexed-merkle-tree
 
 ## Usage
+
+```solidity
+import {IndexedMerkleTree} from "./IndexedMerkleTree.sol";
+...
+IndexedMerkleTree.Proof memory proof = _getProofSomehow(); 
+bool valid = IndexedMerkleTree.verify(proof)
+```
 
 ### Build
 
@@ -23,38 +23,10 @@ $ forge build
 
 ### Test
 
-```shell
-$ forge test
-```
-
-### Format
+The testing infrastructure calls out to go scripts implemented in the `go/` directory. Make sure to include the `--ffi` flag when running tests.  
 
 ```shell
-$ forge fmt
-```
-
-### Gas Snapshots
-
-```shell
-$ forge snapshot
-```
-
-### Anvil
-
-```shell
-$ anvil
-```
-
-### Deploy
-
-```shell
-$ forge script script/Counter.s.sol:CounterScript --rpc-url <your_rpc_url> --private-key <your_private_key>
-```
-
-### Cast
-
-```shell
-$ cast <subcommand>
+$ forge test --ffi --vvv
 ```
 
 ### Help
