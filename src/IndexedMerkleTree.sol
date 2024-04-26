@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.23;
-import {console2} from "forge-std/Test.sol";
+
 import {PoseidonT3} from "poseidon-solidity/PoseidonT3.sol";
 import {PoseidonT4} from "poseidon-solidity/PoseidonT4.sol";
 
