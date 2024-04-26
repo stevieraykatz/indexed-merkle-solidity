@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.23;
+import {console2} from "forge-std/Test.sol";
 
 library IndexedMerkleTree {
     
@@ -17,13 +18,13 @@ library IndexedMerkleTree {
         uint256[] siblings;
     }
 
-    function verify(
-        Proof memory proof,
-        uint256 levels
-    ) internal pure returns (bool) {
+    function verify(Proof memory proof) internal pure returns (bool) {
         bytes32 computedHash = _hashNode(proof.node);
+        console2.logBytes32(computedHash);
         uint256 index = proof.index;
-        for (uint256 level = levels; level > 0; index /= 2) {
+        console2.log(index);
+        for (uint256 level = proof.siblings.length; level > 0; index /= 2) {
+            console2.log(level);
             level--;
             uint256 sibling = proof.siblings[level];
             if (sibling != 0) {
@@ -33,8 +34,14 @@ library IndexedMerkleTree {
                     computedHash = keccak256(abi.encode(computedHash, sibling));
                 }
             }
+            console2.logBytes32(computedHash);
         }
         computedHash = keccak256(abi.encode(computedHash, proof.size));
+        console2.logBytes32(computedHash);
+        console2.logBytes32(proof.root);
+        
+        
+        
         return computedHash == proof.root;
     }
 
