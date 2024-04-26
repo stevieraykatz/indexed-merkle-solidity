@@ -94,8 +94,8 @@ func getInclusionProof(key *big.Int, t *imt.TreeWriter) {
 	for i := 0; i < len(inclusionProof.Siblings); i++ {
 		result += hexutil.Encode(padBytes(inclusionProof.Siblings[i].Bytes(), 32))[2:]
 	}
-	valid, _ := inclusionProof.Valid(&t.TreeReader)
-	fmt.Println(valid)
+	// valid, _ := inclusionProof.Valid(&t.TreeReader)
+	// fmt.Println(valid)
 	fmt.Println(result)
 }
 

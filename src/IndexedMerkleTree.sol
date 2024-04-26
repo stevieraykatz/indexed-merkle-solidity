@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.23;
 import {console2} from "forge-std/Test.sol";
+import {PoseidonT3} from "poseidon-solidity/PoseidonT3.sol";
+import {PoseidonT4} from "poseidon-solidity/PoseidonT4.sol";
 
 library IndexedMerkleTree {
     
@@ -19,33 +21,37 @@ library IndexedMerkleTree {
     }
 
     function verify(Proof memory proof) internal pure returns (bool) {
-        bytes32 computedHash = _hashNode(proof.node);
-        console2.logBytes32(computedHash);
+        uint256 computedHash = _hashNode(proof.node);
         uint256 index = proof.index;
-        console2.log(index);
         for (uint256 level = proof.siblings.length; level > 0; index /= 2) {
-            console2.log(level);
             level--;
             uint256 sibling = proof.siblings[level];
             if (sibling != 0) {
                 if (index%2 == 0) {
-                    computedHash = keccak256(abi.encode(sibling, computedHash));
+                    computedHash = _hashPair(sibling, computedHash);
                 } else {
-                    computedHash = keccak256(abi.encode(computedHash, sibling));
+                    computedHash = _hashPair(computedHash, sibling);
                 }
             }
-            console2.logBytes32(computedHash);
         }
-        computedHash = keccak256(abi.encode(computedHash, proof.size));
-        console2.logBytes32(computedHash);
-        console2.logBytes32(proof.root);
-        
-        
-        
-        return computedHash == proof.root;
+        computedHash = _hashPair(computedHash, proof.size);     
+        return bytes32(computedHash) == proof.root;
     }
 
-    function _hashNode(Node memory node) internal pure returns (bytes32) {
-        return keccak256(abi.encode(node.key, node.value, node.nextKey));
+    function _hashPair(uint256 a, uint256 b) internal pure returns (uint256) {
+        uint256[2] memory _pair = [
+            a, 
+            b
+        ];
+        return PoseidonT3.hash(_pair);
+    }
+
+    function _hashNode(Node memory node) internal pure returns (uint256) {
+        uint256[3] memory _node = [
+            node.key,
+            node.value,
+            node.nextKey
+        ];
+        return PoseidonT4.hash(_node);
     }
 }
