@@ -11,7 +11,7 @@ import (
 	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/mdehoog/indexed-merkle-tree/db"
 	"github.com/mdehoog/indexed-merkle-tree/imt"
-	"github.com/mdehoog/poseidon/poseidon"
+	"github.com/wealdtech/go-merkletree/v2/keccak256"
 )
 
 func main() {
@@ -20,7 +20,8 @@ func main() {
 	pDb, _ := pebble.Open(temp, &pebble.Options{})
 	imtDb := db.NewPebble(pDb)
 	tx := imtDb.NewTransaction()
-	tree := imt.NewTreeWriter(tx, levels, fr.Bytes, poseidon.Hash[*fr.Element])
+	tree := imt.NewTreeWriter(tx, levels, fr.Bytes, hashFn)
+	// tree := imt.NewTreeWriter(tx, levels, fr.Bytes, poseidon.Hash[*fr.Element])
 	key := big.NewInt(123)
 	tree.Insert(key, big.NewInt(456))
 
@@ -47,6 +48,18 @@ func main() {
 			os.Exit(1)
 		}
 		getExcluisonProof(key, tree)
+	} else if os.Args[1] == "testHash" {
+		a, successA := new(big.Int).SetString(os.Args[2], 10)
+		if !successA {
+			fmt.Println("Error parsing key argument:", os.Args[2])
+			os.Exit(1)
+		}
+		b, successB := new(big.Int).SetString(os.Args[3], 10)
+		if !successB {
+			fmt.Println("Error parsing key argument:", os.Args[2])
+			os.Exit(1)
+		}
+		testHash(a, b)
 	}
 }
 
@@ -63,6 +76,14 @@ func getInclusionProof(key *big.Int, t *imt.TreeWriter) {
 func getExcluisonProof(key *big.Int, t *imt.TreeWriter) {
 	exclusionProof, _ := t.ProveExclusion(key)
 	_encodeForFoundry(exclusionProof)
+}
+
+func testHash(a *big.Int, b *big.Int) {
+	I := make([]*big.Int, 2)
+	I[0] = a
+	I[1] = b
+	h, _ := hashFn(I)
+	fmt.Println(h)
 }
 
 func _encodeForFoundry(p *imt.Proof) {
@@ -122,4 +143,17 @@ func Uint64ToBytes(val uint64) []byte {
 	binary.BigEndian.PutUint64(b, val)
 
 	return b
+}
+
+// Wrapper for passing keccak256 into Tree instantiation
+func hashFn(E []*big.Int) (*big.Int, error) {
+	k := keccak256.New()
+	b := make([][]byte, len(E))
+	for i := 0; i < len(E); i++ {
+		b[i] = padBytes(E[i].Bytes(), 32)
+	}
+	h := k.Hash(b...)
+	I := big.Int{}
+	I.SetBytes(h)
+	return &I, nil
 }
