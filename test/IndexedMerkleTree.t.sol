@@ -29,7 +29,6 @@ contract IndexedMerkleTreeTest is Test {
         return abi.decode(vm.ffi(inputs), (bytes32));
     }
 
-
     function _goGetIncProof(uint256 key) internal returns (IndexedMerkleTree.Proof memory) {
         string[] memory inputs = new string[](3);
         inputs[0] = "test/../go/imt";
