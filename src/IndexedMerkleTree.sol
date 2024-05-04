@@ -11,12 +11,13 @@ import {PoseidonT4} from "poseidon-solidity/PoseidonT4.sol";
 /// according to the structures provided.
 /// Be sure to strictly pair trees and proofs with a specific hashing algorithm. This library implements
 /// a mechanism for validating trees hashed using keccak256 or Poseidon as the hashing function.
-
 library IndexedMerkleTree {
     /// @notice A Node represents a single leaf in an IMT
     struct Node {
         /// @dev The unique identifier in the tree upon which the tree is sorted
         uint256 key;
+        /// @dev The node index.
+        uint256 index;
         /// @dev The value associated with this key
         uint256 value;
         /// @dev The linked-list property of an IMT depends on each node knowing the next
@@ -31,8 +32,6 @@ library IndexedMerkleTree {
         bytes32 root;
         /// @dev The tree's size
         uint256 size;
-        /// @dev The index of the leaf node being proved
-        uint256 index;
         /// @dev The Node struct containing the details for the leaf node
         Node node;
         ///@dev The sibling proof list, similar to other Merkle Tree proofs
@@ -48,7 +47,7 @@ library IndexedMerkleTree {
     /// data necessary to validate a provided node.
     function verify(Proof memory proof) internal pure returns (bool) {
         uint256 computedHash = _hashNode(proof.node);
-        uint256 index = proof.index;
+        uint256 index = proof.node.index;
         for (uint256 level = proof.siblings.length; level > 0; index /= 2) {
             level--;
             uint256 sibling = proof.siblings[level];
@@ -64,14 +63,6 @@ library IndexedMerkleTree {
         return bytes32(computedHash) == proof.root;
     }
 
-    function _hashPair(uint256 a, uint256 b) private pure returns (uint256) {
-        return uint256(keccak256(abi.encode(a, b)));
-    }
-
-    function _hashNode(Node memory node) private pure returns (uint256) {
-        return uint256(keccak256(abi.encode(node.key, node.value, node.nextKey)));
-    }
-
     /// @notice The verification method which determines that a proof is valid when using Poseidon hashes
     ///
     /// @dev Ensure proofs are generated using the golang lib linked above
@@ -81,7 +72,7 @@ library IndexedMerkleTree {
     /// data necessary to validate a provided node.
     function verifyPoseidon(Proof memory proof) internal pure returns (bool) {
         uint256 computedHash = _poseidonHashNode(proof.node);
-        uint256 index = proof.index;
+        uint256 index = proof.node.index;
         for (uint256 level = proof.siblings.length; level > 0; index /= 2) {
             level--;
             uint256 sibling = proof.siblings[level];
@@ -97,13 +88,21 @@ library IndexedMerkleTree {
         return bytes32(computedHash) == proof.root;
     }
 
-    function _poseidonHashPair(uint256 a, uint256 b) private pure returns (uint256) {
-        uint256[2] memory _pair = [a, b];
-        return PoseidonT3.hash(_pair);
+    function _hashNode(Node memory node) private pure returns (uint256) {
+        return uint256(keccak256(abi.encode(node.key, node.value, node.nextKey)));
+    }
+
+    function _hashPair(uint256 a, uint256 b) private pure returns (uint256) {
+        return uint256(keccak256(abi.encode(a, b)));
     }
 
     function _poseidonHashNode(Node memory node) private pure returns (uint256) {
         uint256[3] memory _node = [node.key, node.value, node.nextKey];
         return PoseidonT4.hash(_node);
+    }
+
+    function _poseidonHashPair(uint256 a, uint256 b) private pure returns (uint256) {
+        uint256[2] memory _pair = [a, b];
+        return PoseidonT3.hash(_pair);
     }
 }

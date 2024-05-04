@@ -6,7 +6,7 @@ require (
 	github.com/cockroachdb/pebble v1.1.0
 	github.com/consensys/gnark-crypto v0.12.2-0.20240215234832-d72fcb379d3e
 	github.com/ethereum/go-ethereum v1.14.0
-	github.com/mdehoog/indexed-merkle-tree v0.0.0-20240420075202-4a8258bb7064
+	github.com/mdehoog/indexed-merkle-tree v0.0.0-20240501232025-1a1fd8909d63
 	github.com/wealdtech/go-merkletree/v2 v2.5.1
 )
 
