@@ -46,21 +46,7 @@ library IndexedMerkleTree {
     /// @param proof A complete proof struct which describes the tree and the associated
     /// data necessary to validate a provided node.
     function verify(Proof memory proof) internal pure returns (bool) {
-        uint256 computedHash = _hashNode(proof.node);
-        uint256 index = proof.node.index;
-        for (uint256 level = proof.siblings.length; level > 0; index /= 2) {
-            level--;
-            uint256 sibling = proof.siblings[level];
-            if (sibling != 0) {
-                if (index % 2 == 0) {
-                    computedHash = _hashPair(sibling, computedHash);
-                } else {
-                    computedHash = _hashPair(computedHash, sibling);
-                }
-            }
-        }
-        computedHash = _hashPair(computedHash, proof.size);
-        return bytes32(computedHash) == proof.root;
+        return _verify(proof, _hashNode, _hashPair);
     }
 
     /// @notice The verification method which determines that a proof is valid when using Poseidon hashes
@@ -71,19 +57,36 @@ library IndexedMerkleTree {
     /// @param proof A complete proof struct which describes the tree and the associated
     /// data necessary to validate a provided node.
     function verifyPoseidon(Proof memory proof) internal pure returns (bool) {
-        uint256 computedHash = _poseidonHashNode(proof.node);
+        return _verify(proof, _poseidonHashNode, _poseidonHashPair);
+    }
+
+    /// @notice Verifies that a proof is valid.
+    ///
+    /// @dev Ensure proofs are generated using the golang lib linked above
+    /// @dev This method is generic over the hashing alr
+    ///
+    /// @param proof A complete proof struct which describes the tree and the associated
+    /// data necessary to validate a provided node.
+    /// @param hashNode The hasing method to hash the node.
+    /// @param hashPair The hasing method to hash pairs.
+    function _verify(
+        Proof memory proof,
+        function (Node memory) pure returns (uint256) hashNode,
+        function (uint256, uint256) pure returns (uint256) hashPair
+    ) private pure returns (bool) {
+        uint256 computedHash = hashNode(proof.node);
+
         uint256 index = proof.node.index;
         for (uint256 level = proof.siblings.length; level > 0; index /= 2) {
             level--;
+
             uint256 sibling = proof.siblings[level];
             if (sibling != 0) {
-                if (index % 2 == 0) {
-                    computedHash = _poseidonHashPair(sibling, computedHash);
-                } else {
-                    computedHash = _poseidonHashPair(computedHash, sibling);
-                }
+                (uint256 l, uint256 r) = index % 2 == 0 ? (sibling, computedHash) : (computedHash, sibling);
+                computedHash = hashPair(l, r);
             }
         }
+
         computedHash = _hashPair(computedHash, proof.size);
         return bytes32(computedHash) == proof.root;
     }
