@@ -24,14 +24,16 @@ contract IndexedMerkleTreeTest is Test {
 
     function _goGetTree() internal returns (bytes32) {
         string[] memory inputs = new string[](2);
-        inputs[0] = "test/../go/imt";
+        string memory rootdir = vm.projectRoot();
+        inputs[0] = string.concat(rootdir, "/go/imt");
         inputs[1] = "getTreeRoot";
         return abi.decode(vm.ffi(inputs), (bytes32));
     }
 
     function _goGetIncProof(uint256 key) internal returns (IndexedMerkleTree.Proof memory) {
         string[] memory inputs = new string[](3);
-        inputs[0] = "test/../go/imt";
+        string memory rootdir = vm.projectRoot();
+        inputs[0] = string.concat(rootdir, "/go/imt");
         inputs[1] = "getInclusionProof";
         inputs[2] = key.toString();
         return abi.decode(vm.ffi(inputs), (IndexedMerkleTree.Proof));
@@ -39,7 +41,8 @@ contract IndexedMerkleTreeTest is Test {
 
     function _goGetExcProof(uint256 key) internal returns (IndexedMerkleTree.Proof memory) {
         string[] memory inputs = new string[](3);
-        inputs[0] = "test/../go/imt";
+        string memory rootdir = vm.projectRoot();
+        inputs[0] = string.concat(rootdir, "/go/imt");
         inputs[1] = "getExclusionProof";
         inputs[2] = key.toString();
         return abi.decode(vm.ffi(inputs), (IndexedMerkleTree.Proof));
