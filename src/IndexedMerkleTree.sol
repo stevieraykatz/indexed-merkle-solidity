@@ -67,8 +67,8 @@ library IndexedMerkleTree {
     ///
     /// @param proof A complete proof struct which describes the tree and the associated
     /// data necessary to validate a provided node.
-    /// @param hashNode The hasing method to hash the node.
-    /// @param hashPair The hasing method to hash pairs.
+    /// @param hashNode The hashing method to hash the node.
+    /// @param hashPair The hashing method to hash pairs.
     function _verify(
         Proof memory proof,
         function (Node memory) pure returns (uint256) hashNode,
