@@ -22,8 +22,7 @@ func main() {
 	tx := imtDb.NewTransaction()
 	tree := imt.NewTreeWriter(tx, levels, fr.Bytes, hashFn)
 	// tree := imt.NewTreeWriter(tx, levels, fr.Bytes, poseidon.Hash[*fr.Element])
-	key := big.NewInt(123)
-	tree.Insert(key, big.NewInt(456))
+	tree.Insert(big.NewInt(123), big.NewInt(456))
 
 	if len(os.Args) < 2 {
 		fmt.Println("Please provide a valid method name and optional key arg")

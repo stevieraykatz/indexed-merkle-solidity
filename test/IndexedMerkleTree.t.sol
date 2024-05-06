@@ -12,14 +12,16 @@ contract IndexedMerkleTreeTest is Test {
         (bytes32 root) = _goGetTree();
         console2.logBytes32(root);
         IndexedMerkleTree.Proof memory proof = _goGetIncProof(123);
-        assert(IndexedMerkleTree.verify(proof));
+        assertTrue(IndexedMerkleTree.verifyInclusionProof(proof, IndexedMerkleTree.HashType.Keccak256));
     }
 
     function test_verifyExclusion() public {
         (bytes32 root) = _goGetTree();
         console2.logBytes32(root);
-        IndexedMerkleTree.Proof memory proof = _goGetExcProof(124);
-        assert(IndexedMerkleTree.verify(proof));
+        IndexedMerkleTree.Proof memory proof = _goGetExcProof(42);
+        assertTrue(IndexedMerkleTree.verifyExclusionProof(42, proof, IndexedMerkleTree.HashType.Keccak256));
+        assertFalse(IndexedMerkleTree.verifyExclusionProof(123, proof, IndexedMerkleTree.HashType.Keccak256));
+        assertFalse(IndexedMerkleTree.verifyExclusionProof(1337, proof, IndexedMerkleTree.HashType.Keccak256));
     }
 
     function _goGetTree() internal returns (bytes32) {
